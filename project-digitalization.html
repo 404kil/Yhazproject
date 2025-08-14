@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>YHAZ Archive</title>
+<style>
+:root {
+  --bg-light: #ffffff;
+  --text-light: #000000;
+  --bg-dark: #000000;
+  --text-dark: #ffffff;
+  --accent: #aaaaaa;
+  --btn-bg-light: #ddd;
+  --btn-bg-dark: #333;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  transition: background-color 0.3s, color 0.3s;
+  padding: 2rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+body.dark-mode {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+h1 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+p.description {
+  margin-bottom: 2rem;
+  background: rgba(0,0,0,0.05);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+body.dark-mode p.description {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+button.project-btn {
+  flex: 1 1 200px;
+  max-width: 220px;
+  background-color: var(--btn-bg-light);
+  border: 2px solid var(--accent);
+  color: var(--text-light);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+button.project-btn:hover {
+  background-color: var(--accent);
+  color: #000;
+  border-color: #666;
+}
+
+body.dark-mode button.project-btn {
+  background-color: var(--btn-bg-dark);
+  color: var(--text-dark);
+  border-color: var(--accent);
+}
+
+body.dark-mode button.project-btn:hover {
+  background-color: var(--accent);
+  color: #000;
+  border-color: #aaa;
+}
+
+.toggle-theme {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: 1px solid currentColor;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  z-index: 10;
+}
+
+.toggle-theme:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Pulsante Home adattivo */
+.home-toggle {
+  position: fixed;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--accent);
+  transition: color 0.2s;
+}
+
+.home-toggle:hover {
+  color: #ffaa00;
+}
+
+/* Desktop: top-left */
+@media (min-width: 768px) {
+  .home-toggle {
+    top: 1rem;
+    left: 1rem;
+  }
+}
+
+/* Mobile: bottom-right */
+@media (max-width: 767px) {
+  .home-toggle {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Pulsante Home -->
+<button class="home-toggle" onclick="goHome()" aria-label="Torna alla Home">☰</button>
+
+<!-- Toggle Tema -->
+<button class="toggle-theme" onclick="toggleTheme()" aria-label="Cambia tema">🌓</button>
+
+<h1>YHAZ ARCHIVE</h1>
+<p class="description">
+  Risorse utili.
+</p>
+
+<div class="btn-container">
+  <button class="project-btn" onclick="openProject('powershell-data.html')">PowerShell-Data</button>
+  <button class="project-btn" onclick="openProject('math-db.html')">MacOs Keys Reference</button>
+  <button class="project-btn" onclick="openProject('history-db.html')">Windows Key Reference</button>
+</div>
+
+<script>
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+}
+
+function openProject(page) {
+  window.location.href = page;
+}
+
+function goHome() {
+  window.location.href = 'index.html'; // Modifica se la home ha un altro nome
+}
+</script>
+
+</body>
+</html>
