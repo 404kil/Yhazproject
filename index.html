@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YHAZ Made-it – Home</title>
+  <style>
+    :root {
+      --bg-light: #ffffff;
+      --text-light: #000000;
+      --bg-dark: #000000;
+      --text-dark: #ffffff;
+      --accent: #aaaaaa;
+      --card-bg-light: #f0f0f0;
+      --card-bg-dark: #1a1a1a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
+      line-height: 1.6;
+    }
+
+    body.dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .step-list {
+      list-style: none;
+      margin-top: 2rem;
+    }
+
+    .step-list li {
+      background: var(--card-bg-light);
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .step-list li:hover {
+      transform: translateY(-2px);
+      background: var(--accent);
+      color: #000;
+    }
+
+    body.dark-mode .step-list li {
+      background: var(--card-bg-dark);
+      color: var(--text-dark);
+    }
+
+    .step-list a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .toggle-theme {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: 1px solid currentColor;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .toggle-theme:hover {
+      background: var(--accent);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-theme" onclick="toggleTheme()">🌓</button>
+  <div class="container">
+    <h1>YHAZ Made-it</h1>
+    <ul class="step-list">
+      <li><a href="project-digitalization.html">YHAZ ACHIVE</a></li>
+      <li><a href="yhaz protocol.html">YHAZ SOLUTION</a></li>
+      <li><a href="yhaz-lab.html">YHAZ LAB</a></li>
+      <li><a href="yhaz read.html">YHAZ READ (ART-CL)</a></li>
+      <li><a href="https://yeezy.com" target="_blank">Y-E-E-Z-Y</a></li>
+      <li><a href="yhaz-sponsor.html">YHAZ PARTNERSHIP</a></li>
+
+    </ul>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
+</body>
+</html>
