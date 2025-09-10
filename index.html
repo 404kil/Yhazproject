@@ -1,119 +1,102 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YHAZ Made-it – Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YHAZ Made-it</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-light: #ffffff;
-      --text-light: #000000;
-      --bg-dark: #000000;
-      --text-dark: #ffffff;
-      --accent: #aaaaaa;
-      --card-bg-light: #f0f0f0;
-      --card-bg-dark: #1a1a1a;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: Arial, Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      transition: background-color 0.3s, color 0.3s;
-      line-height: 1.6;
-    }
-
-    body.dark-mode {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
+      font-family: 'VT323', monospace;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
     }
 
     h1 {
-      margin-bottom: 1rem;
-      color: var(--accent);
-      text-align: center;
+      font-size: 2.5rem;
+      margin: 30px 0;
+      color: #fff;
+      font-weight: normal;
     }
 
-    .step-list {
-      list-style: none;
-      margin-top: 2rem;
+    .game-list {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .step-list li {
-      background: var(--card-bg-light);
-      margin-bottom: 1rem;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      transition: transform 0.2s, background 0.3s;
+    .game-card {
+      border: 1px solid #555;
+      padding: 25px 0;
+      font-size: 1.2rem;
+      transition: background-color 0.2s, color 0.2s;
+      text-transform: uppercase;
+      border-radius: 6px;
     }
 
-    .step-list li:hover {
-      transform: translateY(-2px);
-      background: var(--accent);
+    .game-card:hover {
+      background-color: #fff;
       color: #000;
+      cursor: pointer;
     }
 
-    body.dark-mode .step-list li {
-      background: var(--card-bg-dark);
-      color: var(--text-dark);
-    }
-
-    .step-list a {
-      display: block;
+    a {
       text-decoration: none;
       color: inherit;
+      display: block;
+      width: 100%;
+      height: 100%;
     }
 
-    .toggle-theme {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: 1px solid currentColor;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .toggle-theme:hover {
-      background: var(--accent);
-      color: #000;
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <button class="toggle-theme" onclick="toggleTheme()">🌓</button>
-  <div class="container">
-    <h1>YHAZ Made-it</h1>
-    <ul class="step-list">
-      <li><a href="project-digitalization.html">YHAZ ACHIVE</a></li>
-      <li><a href="yhaz protocol.html">YHAZ SOLUTION</a></li>
-      <li><a href="yhaz-lab.html">YHAZ LAB</a></li>
-      <li><a href="yhaz read.html">YHAZ READ (ART-CL)</a></li>
-      <li><a href="https://yeezy.com" target="_blank">Y-E-E-Z-Y</a></li>
-      <li><a href="yhaz-sponsor.html">YHAZ PARTNERSHIP</a></li>
 
-    </ul>
+  <h1>YHAZ Made-it</h1>
+
+  <div class="game-list">
+    <div class="game-card"><a href="tetris4.html">This
+device</a></div>
+    <div class="game-card"><a href="snake.html">Vaulty</a></div>
+    <div class="game-card"><a href="pacman.html">Arcade</a></div>
+    <div class="game-card"><a href="dino.html">Winkeyreference</a></div>
+    <div class="game-card"><a href="frogger.html">MacOS Keyreference</a></div>
+    <div class="game-card"><a href="spaceinvader1.html">Utopia Smartbin</a></div>
+    <div class="game-card"><a href="memory.html">Robotic</a></div>
+    <div class="game-card"><a href="tictac3.html">Screen Apocalipse</a></div>
+    <div class="game-card"><a href="campominato.html">Math Ultimate Table</a></div>
+    <div class="game-card"><a href="sudoku.html">Human OS</a></div>
+  
+    <div class="game-card"><a href="breakout.html">Breakout</a></div>
+
+    <!-- Sezione giochi classici -->
+    <div class="game-card"><a href="tetris4.html">Tetris</a></div>
+    <div class="game-card"><a href="snake.html">Snake</a></div>
+    <div class="game-card"><a href="pacman.html">Pac-Man</a></div>
+    <div class="game-card"><a href="dino.html">Dino</a></div>
+    <div class="game-card"><a href="frogger.html">Frogger</a></div>
+    <div class="game-card"><a href="spaceinvader1.html">Space Invader</a></div>
+    <div class="game-card"><a href="memory.html">Memory</a></div>
+    <div class="game-card"><a href="tictac3.html">Tic-Tac-Toe</a></div>
+    <div class="game-card"><a href="campominato.html">Campo Minato</a></div>
+    <div class="game-card"><a href="sudoku.html">Sudoku</a></div>
+    <div class="game-card"><a href="pong4.html">Pong</a></div>
+    <div class="game-card"><a href="breakout.html">Breakout</a></div>
   </div>
 
-  <script>
-    function toggleTheme() {
-      document.body.classList.toggle('dark-mode');
-    }
-  </script>
+  <footer>
+    © 2025 YHAZ Made-it – Collection
+  </footer>
 </body>
 </html>
