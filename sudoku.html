@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUDOKU - YHAZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#000; --fg:#fff; --muted:#888; --accent:#fff;
+      --danger:#ff4d4d; --ok:#5cff5c; --cell-bg:#0b0b0b;
+      --fixed-color:#5cff5c; --user-color:#ff4d4d; --conflict-color:#ff4d4d;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:'VT323',monospace;}
+    body{display:flex; flex-direction:column;}
+    header{display:flex; align-items:center; justify-content:center; padding:6px; position:relative;}
+    .home-btn{position:absolute; left:12px; background:none; border:none; color:var(--fg); font-family:'VT323'; font-size:16px; cursor:pointer; padding:4px 8px; border-radius:4px;}
+    .home-btn:hover{background:rgba(255,255,255,0.1);}
+    h1{margin:0; font-size:32px; text-shadow:0 0 6px #fff;}
+    .kbd{color:var(--muted); font-size:12px; margin-top:2px;}
+    .game-container{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:4px; width:100%;}
+    .board-container{display:flex; justify-content:center; align-items:center; margin:12px auto; padding:8px;}
+    .sudoku-board{display:grid; grid-template-columns:repeat(9, 1fr); gap:1px; background:var(--fg); border:2px solid var(--fg); margin:0 auto;}
+    .cell{width:35px; height:35px; display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; background:var(--cell-bg); transition:0.1s; border:1px solid var(--muted);}
+    .cell:hover{background:#1a1a1a;}
+    .cell.fixed{color:var(--fixed-color); font-weight:bold;}
+    .cell.user{color:var(--user-color);}
+    .cell.conflict{background:rgba(255,77,77,0.2);}
+    .cell.selected{background:rgba(255,255,255,0.1);}
+    .cell:nth-child(3n){border-right:2px solid var(--fg);}
+    .cell:nth-child(9n){border-right:none;}
+    .sudoku-board .cell:nth-child(n+19):nth-child(-n+27),
+    .sudoku-board .cell:nth-child(n+46):nth-child(-n+54){border-bottom:2px solid var(--fg);}
+    .info{display:flex; gap:12px; justify-content:center; font-size:14px; margin:8px 0;}
+    .controls{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:6px 0; width:100%; max-width:480px;}
+    .btn{flex:1; min-width:60px; border:1px solid var(--fg); padding:12px 0; background:transparent; color:var(--fg); cursor:pointer; font-family:'VT323'; text-transform:uppercase; font-size:16px; border-radius:8px; max-width:120px;}
+    .btn:hover{background:var(--fg); color:var(--bg);}
+    .number-pad{display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; margin:12px 0; max-width:300px;}
+    .num-btn{width:50px; height:50px; border:1px solid var(--fg); display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; background:var(--cell-bg); border-radius:4px;}
+    .num-btn:hover{background:rgba(255,255,255,0.1);}
+    .num-btn.clear{color:var(--danger); grid-column:span 2;}
+    .message{color:var(--fg); margin:8px 0; min-height:22px; font-size:16px; text-align:center;}
+    footer{text-align:center; color:var(--muted); font-size:12px; padding:6px;}
+    
+    /* Miglioramenti per desktop */
+    @media (min-width: 768px) {
+      .btn{max-width:140px; padding:14px 0; font-size:18px;}
+      .cell{width:45px; height:45px; font-size:22px;}
+      .num-btn{width:55px; height:55px; font-size:22px;}
+      h1{font-size:36px;}
+    }
+
+    /* Miglioramenti per mobile */
+    @media (max-width: 480px) {
+      .game-container{padding:2px;}
+      .cell{width:30px; height:30px; font-size:16px;}
+      .controls{gap:4px; padding:0 8px;}
+      .btn{min-width:50px; font-size:14px; padding:10px 0;}
+      .num-btn{width:45px; height:45px; font-size:18px;}
+      h1{font-size:28px;}
+    }
+
+    /* Per schermi molto piccoli */
+    @media (max-width: 360px) {
+      .cell{width:25px; height:25px; font-size:14px;}
+      .num-btn{width:40px; height:40px; font-size:16px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="home-btn" id="home">HOME</button>
+    <div style="text-align:center;">
+      <h1>YHAZ SUDOKU</h1>
+      <div class="kbd">Clicca celle • Usa tastierino • Numeri da 1 a 9</div>
+    </div>
+  </header>
+
+  <div class="game-container">
+    <div class="info">
+      <div>Fissi: <strong style="color:#5cff5c">Verde</strong></div>
+      <div>•</div>
+      <div>Tu: <strong style="color:#ff4d4d">Rosso</strong></div>
+      <div>•</div>
+      <div>Errori: <strong id="errors">0</strong></div>
+    </div>
+
+    <div class="board-container">
+      <div class="sudoku-board" id="board"></div>
+    </div>
+
+    <div class="message" id="message">Seleziona una cella e inserisci un numero</div>
+
+    <div class="number-pad" id="numberPad">
+      <!-- I numeri verranno generati dinamicamente -->
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="restartBtn">Ricomincia</button>
+      <button class="btn" id="hintBtn">Suggerimento</button>
+      <button class="btn" id="validateBtn">Verifica</button>
+    </div>
+  </div>
+
+  <footer>© 2025 YHAZ — Sudoku • VT323 look</footer>
+
+  <script>
+    (() => {
+      const board = document.getElementById("board");
+      const message = document.getElementById("message");
+      const restartBtn = document.getElementById("restartBtn");
+      const hintBtn = document.getElementById("hintBtn");
+      const validateBtn = document.getElementById("validateBtn");
+      const homeBtn = document.getElementById("home");
+      const errorsEl = document.getElementById("errors");
+      const numberPad = document.getElementById("numberPad");
+
+      let cells = [];
+      let selectedCell = null;
+      let errors = 0;
+      let gameCompleted = false;
+
+      // Puzzle di esempio (0 = cella vuota)
+      const initialPuzzle = [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9]
+      ];
+
+      let currentPuzzle = JSON.parse(JSON.stringify(initialPuzzle));
+
+      function createBoard() {
+        board.innerHTML = "";
+        cells = [];
+        selectedCell = null;
+        errors = 0;
+        gameCompleted = false;
+        errorsEl.textContent = errors;
+        message.textContent = "Seleziona una cella e inserisci un numero";
+
+        // Crea le celle
+        for (let row = 0; row < 9; row++) {
+          for (let col = 0; col < 9; col++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            
+            const value = currentPuzzle[row][col];
+            if (value !== 0) {
+              cell.textContent = value;
+              cell.classList.add("fixed");
+            } else {
+              cell.classList.add("user");
+              cell.addEventListener("click", () => selectCell(cell));
+            }
+            
+            board.appendChild(cell);
+            cells.push(cell);
+          }
+        }
+      }
+
+      function createNumberPad() {
+        numberPad.innerHTML = "";
+        
+        // Crea i pulsanti da 1 a 9
+        for (let i = 1; i <= 9; i++) {
+          const btn = document.createElement("div");
+          btn.classList.add("num-btn");
+          btn.textContent = i;
+          btn.addEventListener("click", () => inputNumber(i));
+          numberPad.appendChild(btn);
+        }
+        
+        // Pulsante per cancellare
+        const clearBtn = document.createElement("div");
+        clearBtn.classList.add("num-btn", "clear");
+        clearBtn.textContent = "Cancella";
+        clearBtn.addEventListener("click", clearCell);
+        numberPad.appendChild(clearBtn);
+      }
+
+      function selectCell(cell) {
+        if (gameCompleted) return;
+        
+        // Deseleziona la cella precedente
+        if (selectedCell) {
+          selectedCell.classList.remove("selected");
+        }
+        
+        // Seleziona la nuova cella
+        selectedCell = cell;
+        cell.classList.add("selected");
+        message.textContent = `Cella selezionata: R${parseInt(cell.dataset.row) + 1}, C${parseInt(cell.dataset.col) + 1}`;
+      }
+
+      function inputNumber(number) {
+        if (!selectedCell || gameCompleted) return;
+        
+        const row = parseInt(selectedCell.dataset.row);
+        const col = parseInt(selectedCell.dataset.col);
+        
+        // Controlla se il numero è valido
+        if (isValidMove(row, col, number)) {
+          selectedCell.textContent = number;
+          currentPuzzle[row][col] = number;
+          selectedCell.classList.remove("conflict");
+          
+          // Controlla se il puzzle è completato
+          if (isPuzzleComplete()) {
+            gameCompleted = true;
+            message.textContent = "Complimenti! Puzzle completato! 🎉";
+          } else {
+            message.textContent = `Inserito ${number} in R${row + 1}, C${col + 1}`;
+          }
+        } else {
+          selectedCell.textContent = number;
+          selectedCell.classList.add("conflict");
+          errors++;
+          errorsEl.textContent = errors;
+          message.textContent = `Conflitto! ${number} non può essere inserito qui`;
+        }
+      }
+
+      function clearCell() {
+        if (!selectedCell || gameCompleted) return;
+        
+        const row = parseInt(selectedCell.dataset.row);
+        const col = parseInt(selectedCell.dataset.col);
+        
+        selectedCell.textContent = "";
+        selectedCell.classList.remove("conflict");
+        currentPuzzle[row][col] = 0;
+        message.textContent = "Cella cancellata";
+      }
+
+      function isValidMove(row, col, number) {
+        // Controlla la riga
+        for (let c = 0; c < 9; c++) {
+          if (c !== col && currentPuzzle[row][c] === number) return false;
+        }
+        
+        // Controlla la colonna
+        for (let r = 0; r < 9; r++) {
+          if (r !== row && currentPuzzle[r][col] === number) return false;
+        }
+        
+        // Controlla il blocco 3x3
+        const blockRow = Math.floor(row / 3) * 3;
+        const blockCol = Math.floor(col / 3) * 3;
+        
+        for (let r = blockRow; r < blockRow + 3; r++) {
+          for (let c = blockCol; c < blockCol + 3; c++) {
+            if (r !== row && c !== col && currentPuzzle[r][c] === number) return false;
+          }
+        }
+        
+        return true;
+      }
+
+      function isPuzzleComplete() {
+        for (let row = 0; row < 9; row++) {
+          for (let col = 0; col < 9; col++) {
+            if (currentPuzzle[row][col] === 0) return false;
+          }
+        }
+        return true;
+      }
+
+      function giveHint() {
+        if (gameCompleted) return;
+        
+        // Trova una cella vuota casuale
+        const emptyCells = [];
+        for (let row = 0; row < 9; row++) {
+          for (let col = 0; col < 9; col++) {
+            if (currentPuzzle[row][col] === 0) {
+              emptyCells.push({ row, col });
+            }
+          }
+        }
+        
+        if (emptyCells.length === 0) return;
+        
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        const cellElement = cells[randomCell.row * 9 + randomCell.col];
+        
+        // Seleziona la cella
+        if (selectedCell) selectedCell.classList.remove("selected");
+        selectedCell = cellElement;
+        selectedCell.classList.add("selected");
+        
+        message.textContent = `Suggerimento: Cella R${randomCell.row + 1}, C${randomCell.col + 1}`;
+      }
+
+      function validatePuzzle() {
+        if (gameCompleted) return;
+        
+        let hasErrors = false;
+        
+        // Resetta tutti i conflitti
+        cells.forEach(cell => {
+          if (cell.classList.contains("user")) {
+            cell.classList.remove("conflict");
+          }
+        });
+        
+        // Controlla tutte le celle utente
+        for (let row = 0; row < 9; row++) {
+          for (let col = 0; col < 9; col++) {
+            if (currentPuzzle[row][col] !== 0 && !isValidMove(row, col, currentPuzzle[row][col])) {
+              const cellIndex = row * 9 + col;
+              cells[cellIndex].classList.add("conflict");
+              hasErrors = true;
+            }
+          }
+        }
+        
+        if (hasErrors) {
+          message.textContent = "Ci sono errori nel puzzle. Celle in rosso hanno conflitti.";
+        } else {
+          message.textContent = "Nessun conflitto trovato! Continua così!";
+        }
+      }
+
+      function restartGame() {
+        currentPuzzle = JSON.parse(JSON.stringify(initialPuzzle));
+        createBoard();
+      }
+
+      // Aggiungi supporto per tastiera
+      document.addEventListener('keydown', (e) => {
+        if (!selectedCell || gameCompleted) return;
+        
+        const key = e.key;
+        if (key >= '1' && key <= '9') {
+          inputNumber(parseInt(key));
+        } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
+          clearCell();
+        }
+      });
+
+      // Event listeners
+      restartBtn.addEventListener('click', restartGame);
+      hintBtn.addEventListener('click', giveHint);
+      validateBtn.addEventListener('click', validatePuzzle);
+      homeBtn.addEventListener('click', () => {
+        if(confirm('Tornare alla home? Il gioco in corso verrà interrotto.')){
+          window.location.href = 'index.html';
+        }
+      });
+
+      // Inizializzazione
+      createBoard();
+      createNumberPad();
+    })();
+  </script>
+</body>
+</html>
