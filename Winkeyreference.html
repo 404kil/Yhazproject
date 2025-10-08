@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riferimento Scorciatoie Windows - YHAZ Made-it</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --muted: #888;
+      --accent: #fff;
+      --card-bg: #111;
+      --card-hover-bg: #fff;
+      --card-hover-fg: #000;
+    }
+
+    /* Tema chiaro automatico */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #fff;
+        --fg: #000;
+        --muted: #555;
+        --accent: #000;
+        --card-bg: #f5f5f5;
+        --card-hover-bg: #000;
+        --card-hover-fg: #fff;
+      }
+    }
+
+    body {
+      font-family: 'VT323', monospace;
+      background-color: var(--bg);
+      color: var(--fg);
+      text-align: center;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 30px 0;
+      font-weight: normal;
+      color: var(--fg);
+    }
+
+    .theme-toggle {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: var(--fg);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: var(--fg);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .search-container {
+      margin: 20px auto;
+      max-width: 500px;
+    }
+
+    #search {
+      width: 100%;
+      padding: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--fg);
+      color: var(--fg);
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;
+      border-radius: 6px;
+    }
+
+    .categories {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .category-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--fg);
+      color: var(--fg);
+      padding: 8px 15px;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 6px;
+    }
+
+    .category-btn:hover, .category-btn.active {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .shortcut-card {
+      border: 1px solid var(--fg);
+      padding: 20px;
+      text-align: left;
+      transition: all 0.2s;
+      border-radius: 6px;
+      background-color: var(--card-bg);
+    }
+
+    .shortcut-card:hover {
+      background-color: var(--card-hover-bg);
+      color: var(--card-hover-fg);
+      transform: translateY(-5px);
+    }
+
+    .shortcut-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .shortcut-card p {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      margin: 0;
+    }
+
+    .key-combo {
+      display: inline-block;
+      background: var(--muted);
+      color: var(--bg);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-right: 5px;
+      font-size: 0.9rem;
+    }
+
+    .category-tag {
+      display: inline-block;
+      background: var(--muted);
+      color: var(--bg);
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .section-title {
+      text-align: left;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      border-bottom: 1px solid var(--fg);
+      padding-bottom: 5px;
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>RIFERIMENTO SCORCIATOIE WINDOWS</h1>
+  
+  <a href="index.html" class="back-button">Torna alla Home</a>
+  <button class="theme-toggle" onclick="toggleTheme()">Cambia Tema</button>
+
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Cerca scorciatoia...">
+  </div>
+
+  <div class="categories">
+    <button class="category-btn active" data-category="all">Tutte</button>
+    <button class="category-btn" data-category="sistema">Sistema</button>
+    <button class="category-btn" data-category="file">File Explorer</button>
+    <button class="category-btn" data-category="browser">Browser</button>
+    <button class="category-btn" data-category="app">Applicazioni</button>
+    <button class="category-btn" data-category="testo">Testo</button>
+    <button class="category-btn" data-category="accessibilita">Accessibilità</button>
+  </div>
+
+  <div class="shortcuts-grid">
+    <!-- Scorciatoie di sistema -->
+    <div class="section-title">Sistema</div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">D</span></h2>
+      <p>Mostra/Nascondi desktop</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">E</span></h2>
+      <p>Apri Esplora File</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">I</span></h2>
+      <p>Apri Impostazioni</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">L</span></h2>
+      <p>Blocca computer</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">R</span></h2>
+      <p>Apri Esegui</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">X</span></h2>
+      <p>Apri menu Quick Link</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">P</span></h2>
+      <p>Opzioni di proiezione</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">A</span></h2>
+      <p>Apri Centro notifiche</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">S</span></h2>
+      <p>Apri Ricerca</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">Tab</span></h2>
+      <p>Passa tra applicazioni aperte</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">F4</span></h2>
+      <p>Chiudi finestra attiva</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Shift</span> + <span class="key-combo">Esc</span></h2>
+      <p>Apri Task Manager</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">Ctrl</span> + <span class="key-combo">D</span></h2>
+      <p>Crea nuovo desktop virtuale</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">Ctrl</span> + <span class="key-combo">F4</span></h2>
+      <p>Chiudi desktop virtuale corrente</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="sistema">
+      <span class="category-tag">Sistema</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">Ctrl</span> + <span class="key-combo">→</span>/<span class="key-combo">←</span></h2>
+      <p>Passa tra desktop virtuali</p>
+    </div>
+
+    <!-- Scorciatoie File Explorer -->
+    <div class="section-title">File Explorer</div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">N</span></h2>
+      <p>Apri nuova finestra</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Shift</span> + <span class="key-combo">N</span></h2>
+      <p>Crea nuova cartella</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">F2</span></h2>
+      <p>Rinomina elemento selezionato</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">F5</span></h2>
+      <p>Aggiorna finestra</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">→</span></h2>
+      <p>Vai avanti</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">←</span></h2>
+      <p>Vai indietro</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">↑</span></h2>
+      <p>Vai alla cartella superiore</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">E</span></h2>
+      <p>Vai alla barra di ricerca</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Shift</span> + <span class="key-combo">E</span></h2>
+      <p>Espandi tutte le cartelle</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">L</span></h2>
+      <p>Seleziona barra degli indirizzi</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">Invio</span></h2>
+      <p>Proprietà elemento selezionato</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="file">
+      <span class="category-tag">File Explorer</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Shift</span> + <span class="key-combo">N</span></h2>
+      <p>Crea nuova cartella</p>
+    </div>
+
+    <!-- Scorciatoie Browser -->
+    <div class="section-title">Browser Web</div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">T</span></h2>
+      <p>Apri nuova scheda</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">W</span></h2>
+      <p>Chiudi scheda corrente</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Shift</span> + <span class="key-combo">T</span></h2>
+      <p>Riapri ultima scheda chiusa</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Tab</span></h2>
+      <p>Passa alla scheda successiva</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Shift</span> + <span class="key-combo">Tab</span></h2>
+      <p>Passa alla scheda precedente</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">R</span></h2>
+      <p>Ricarica pagina</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">F5</span></h2>
+      <p>Ricarica pagina</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">F5</span></h2>
+      <p>Ricarica forzata (ignora cache)</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">L</span></h2>
+      <p>Vai alla barra degli indirizzi</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">F</span></h2>
+      <p>Cerca nella pagina</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">D</span></h2>
+      <p>Aggiungi ai preferiti</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">H</span></h2>
+      <p>Apri cronologia</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">J</span></h2>
+      <p>Apri download</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">+</span></h2>
+      <p>Zoom avanti</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">-</span></h2>
+      <p>Zoom indietro</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="browser">
+      <span class="category-tag">Browser</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">0</span></h2>
+      <p>Ripristina zoom</p>
+    </div>
+
+    <!-- Scorciatoie Applicazioni -->
+    <div class="section-title">Applicazioni e Testo</div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">C</span></h2>
+      <p>Copia</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">X</span></h2>
+      <p>Taglia</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">V</span></h2>
+      <p>Incolla</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Z</span></h2>
+      <p>Annulla</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">Y</span></h2>
+      <p>Ripeti</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">A</span></h2>
+      <p>Seleziona tutto</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">S</span></h2>
+      <p>Salva</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">O</span></h2>
+      <p>Apri</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="app">
+      <span class="category-tag">Applicazioni</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">P</span></h2>
+      <p>Stampa</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="testo">
+      <span class="category-tag">Testo</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">B</span></h2>
+      <p>Grassetto</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="testo">
+      <span class="category-tag">Testo</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">I</span></h2>
+      <p>Corsivo</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="testo">
+      <span class="category-tag">Testo</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">U</span></h2>
+      <p>Sottolineato</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="testo">
+      <span class="category-tag">Testo</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">F</span></h2>
+      <p>Cerca nel documento</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="testo">
+      <span class="category-tag">Testo</span>
+      <h2><span class="key-combo">Ctrl</span> + <span class="key-combo">H</span></h2>
+      <p>Sostituisci nel documento</p>
+    </div>
+
+    <!-- Scorciatoie Accessibilità -->
+    <div class="section-title">Accessibilità</div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">+</span></h2>
+      <p>Attiva lente di ingrandimento (zoom avanti)</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">-</span></h2>
+      <p>Lente di ingrandimento (zoom indietro)</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">Esc</span></h2>
+      <p>Disattiva lente di ingrandimento</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">Ctrl</span> + <span class="key-combo">N</span></h2>
+      <p>Apri impostazioni Narrator</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Win</span> + <span class="key-combo">Ctrl</span> + <span class="key-combo">O</span></h2>
+      <p>Attiva tastiera su schermo</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Shift</span> × 5</h2>
+      <p>Attiva/disattiva tasti permanenti</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">Shift</span> + <span class="key-combo">Stamp</span></h2>
+      <p>Attiva/disattiva contrasto elevato</p>
+    </div>
+    
+    <div class="shortcut-card" data-category="accessibilita">
+      <span class="category-tag">Accessibilità</span>
+      <h2><span class="key-combo">Alt</span> + <span class="key-combo">Shift</span> + <span class="key-combo">Num</span></h2>
+      <p>Attiva/disattiva tasti mouse</p>
+    </div>
+  </div>
+
+  <footer>
+    <a href = "index.html" target="_blank">© YHAZ Made-it – <a href="https://yahwz.it/" target="_blank">YAHWZ.IT</a><br>
+    <a href="mailto:info@yahwz.it">info@yahwz.it</a>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const root = document.documentElement;
+      const bg = getComputedStyle(root).getPropertyValue('--bg').trim();
+      if(bg === '#000' || bg === 'rgb(0, 0, 0)') {
+        root.style.setProperty('--bg', '#fff');
+        root.style.setProperty('--fg', '#000');
+        root.style.setProperty('--muted', '#555');
+        root.style.setProperty('--accent', '#000');
+        root.style.setProperty('--card-bg', '#f5f5f5');
+        root.style.setProperty('--card-hover-bg', '#000');
+        root.style.setProperty('--card-hover-fg', '#fff');
+      } else {
+        root.style.setProperty('--bg', '#000');
+        root.style.setProperty('--fg', '#fff');
+        root.style.setProperty('--muted', '#888');
+        root.style.setProperty('--accent', '#fff');
+        root.style.setProperty('--card-bg', '#111');
+        root.style.setProperty('--card-hover-bg', '#fff');
+        root.style.setProperty('--card-hover-fg', '#000');
+      }
+    }
+
+    // Funzionalità di ricerca
+    document.getElementById('search').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const cards = document.querySelectorAll('.shortcut-card');
+      
+      cards.forEach(card => {
+        const title = card.querySelector('h2').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    // Funzionalità filtro per categoria
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Rimuovi classe active da tutti i pulsanti
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        // Aggiungi classe active al pulsante cliccato
+        this.classList.add('active');
+        
+        const category = this.getAttribute('data-category');
+        const cards = document.querySelectorAll('.shortcut-card');
+        const sections = document.querySelectorAll('.section-title');
+        
+        if (category === 'all') {
+          // Mostra tutte le carte e sezioni
+          cards.forEach(card => card.style.display = 'block');
+          sections.forEach(section => section.style.display = 'block');
+        } else {
+          // Nascondi tutte le carte e sezioni prima di filtrare
+          cards.forEach(card => card.style.display = 'none');
+          sections.forEach(section => section.style.display = 'none');
+          
+          // Mostra solo le carte della categoria selezionata
+          const categoryCards = document.querySelectorAll(`.shortcut-card[data-category="${category}"]`);
+          categoryCards.forEach(card => card.style.display = 'block');
+          
+          // Mostra i titoli delle sezioni che contengono carte visibili
+          const visibleSections = new Set();
+          categoryCards.forEach(card => {
+            let previousElement = card.previousElementSibling;
+            while (previousElement) {
+              if (previousElement.classList.contains('section-title')) {
+                visibleSections.add(previousElement);
+                break;
+              }
+              previousElement = previousElement.previousElementSibling;
+            }
+          });
+          
+          visibleSections.forEach(section => section.style.display = 'block');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
