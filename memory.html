@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>YHAZ Memory</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#000; --fg:#fff; --muted:#888; --accent:#fff;
+      --danger:#ff4d4d; --ok:#5cff5c; --card:#0b0b0b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:'VT323',monospace;}
+    body{display:flex; flex-direction:column;}
+    header{display:flex; align-items:center; justify-content:center; padding:6px; position:relative;}
+    .home-btn{position:absolute; left:12px; background:none; border:none; color:var(--fg); font-family:'VT323'; font-size:16px; cursor:pointer; padding:4px 8px; border-radius:4px;}
+    .home-btn:hover{background:rgba(255,255,255,0.1);}
+    h1{margin:0; font-size:32px; text-shadow:0 0 6px #fff;}
+    .kbd{color:var(--muted); font-size:12px; margin-top:2px;}
+    .game-container{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:4px; width:100%;}
+    .info{display:flex; gap:12px; justify-content:center; font-size:14px; margin:8px 0;}
+    .controls{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:6px 0; width:100%; max-width:480px;}
+    .btn{flex:1; min-width:60px; border:1px solid var(--fg); padding:12px 0; background:transparent; color:var(--fg); cursor:pointer; font-family:'VT323'; text-transform:uppercase; font-size:16px; border-radius:8px; max-width:120px;}
+    .btn:hover{background:var(--fg); color:var(--bg);}
+    .board{
+      display:grid;
+      gap:8px;
+      justify-content:center;
+      margin:12px auto;
+      width:fit-content;
+      padding:8px;
+    }
+    .board.cols-4{grid-template-columns:repeat(4, minmax(60px, 80px));}
+    .board.cols-6{grid-template-columns:repeat(6, minmax(50px, 70px));}
+    .card{
+      width:80px; height:80px; perspective:800px;
+    }
+    .card-inner{
+      width:100%; height:100%; position:relative; transition: transform .32s; transform-style: preserve-3d; cursor:pointer;
+    }
+    .card.flipped .card-inner{ transform: rotateY(180deg); }
+    .face{
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      border:1px solid var(--fg); backface-visibility:hidden; background:var(--card); color:var(--fg);
+      font-size:28px; user-select:none; border-radius:6px;
+    }
+    .face.back{ transform: rotateY(180deg); font-size:24px; }
+    .face.front{ font-size:20px; }
+    .face.revealed{ background:#111; }
+    .mode-controls{display:flex; gap:6px; justify-content:center; margin:8px 0; flex-wrap:wrap;}
+    .mode-btn{border:1px solid var(--fg); padding:8px 16px; background:transparent; cursor:pointer; font-family:'VT323'; font-size:16px; color:var(--fg); border-radius:6px;}
+    .mode-btn:hover{background:var(--fg); color:var(--bg);}
+    .mode-btn.active{background:var(--fg); color:var(--bg);}
+    .message{color:var(--fg); margin:8px 0; min-height:22px; font-size:16px;}
+    footer{text-align:center; color:var(--muted); font-size:12px; padding:6px;}
+
+    /* Miglioramenti per desktop */
+    @media (min-width: 768px) {
+      .btn{max-width:140px; padding:14px 0; font-size:18px;}
+      .card{width:90px; height:90px;}
+      .board.cols-4{grid-template-columns:repeat(4, minmax(70px, 90px));}
+      .board.cols-6{grid-template-columns:repeat(6, minmax(60px, 80px));}
+      h1{font-size:36px;}
+    }
+
+    /* Miglioramenti per mobile */
+    @media (max-width: 480px) {
+      .game-container{padding:2px;}
+      .card{width:60px; height:60px;}
+      .board{gap:6px; padding:4px;}
+      .board.cols-4{grid-template-columns:repeat(4, minmax(50px, 60px));}
+      .board.cols-6{grid-template-columns:repeat(6, minmax(40px, 50px));}
+      .controls{gap:4px; padding:0 8px;}
+      .btn{min-width:50px; font-size:14px; padding:10px 0;}
+      .face{font-size:18px;}
+      .face.back{font-size:16px;}
+      h1{font-size:28px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="home-btn" id="homeBtn">HOME</button>
+    <div style="text-align:center;">
+      <h1>YHAZ MEMORY</h1>
+      <div class="kbd">Trova tutte le coppie — Tap / Click</div>
+    </div>
+  </header>
+
+  <div class="game-container">
+    <div class="mode-controls">
+      <button class="mode-btn active" id="size4">4×4</button>
+      <button class="mode-btn" id="size6">6×6</button>
+      <button class="mode-btn" id="shuffleBtn">Shuffle</button>
+    </div>
+
+    <div class="info">
+      <div>⏱ <strong id="timer">00:00</strong></div>
+      <div>•</div>
+      <div>Mosse: <strong id="moves">0</strong></div>
+      <div>•</div>
+      <div>Best: <strong id="best">—</strong></div>
+    </div>
+
+    <div id="board" class="board cols-4" aria-live="polite"></div>
+
+    <div class="controls">
+      <button class="btn" id="restartBtn">Ricomincia</button>
+      <button class="btn" id="hintBtn">Hint</button>
+      <button class="btn" id="autoSolveBtn">AutoSolve</button>
+    </div>
+
+    <div class="message" id="msg"></div>
+  </div>
+
+  <footer>© 2025 YHAZ — Memory • VT323 look</footer>
+
+<script>
+(() => {
+  const SYMBOLS = ['🍎','🍋','🍐','🍊','🍇','🍓','🍉','🥝','🍒','🥥','🍍','🍑','🥑','🍆','🌶️','🥕','🍄','🌽','⚙️','🎧','🎮','🎲','🔑','✨'];
+  const boardEl = document.getElementById('board');
+  const timerEl = document.getElementById('timer');
+  const movesEl = document.getElementById('moves');
+  const bestEl = document.getElementById('best');
+  const msgEl = document.getElementById('msg');
+  const homeBtn = document.getElementById('homeBtn');
+
+  const size4Btn = document.getElementById('size4');
+  const size6Btn = document.getElementById('size6');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const hintBtn = document.getElementById('hintBtn');
+  const autoSolveBtn = document.getElementById('autoSolveBtn');
+
+  let cols = 4, pairs = 8, cards = [], first = null, second = null;
+  let moves = 0, matches = 0, timerId = null, startTS = null, locked = false, autoSolving = false;
+
+  function formatTime(s){ const m=Math.floor(s/60), ss=s%60; return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); }
+  function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+  function updateModeButtons() {
+    size4Btn.classList.toggle('active', cols === 4);
+    size6Btn.classList.toggle('active', cols === 6);
+  }
+
+  function buildBoard(){
+    cards=[]; boardEl.innerHTML=''; boardEl.className='board '+(cols===4?'cols-4':'cols-6');
+    pairs = (cols===4)?8:18;
+    const chosen = SYMBOLS.slice(0,pairs); let pool=[];
+    chosen.forEach(s=>{pool.push(s); pool.push(s);});
+    shuffleArray(pool);
+    pool.forEach((sym,idx)=>{
+      const card={id:idx,symbol:sym,matched:false,element:null};
+      const wrapper=document.createElement('div'); wrapper.className='card'; wrapper.setAttribute('role','button'); wrapper.tabIndex=0;
+      const inner=document.createElement('div'); inner.className='card-inner';
+      const front=document.createElement('div'); front.className='face front'; front.textContent='?';
+      const back=document.createElement('div'); back.className='face back'; back.textContent=sym;
+      inner.appendChild(front); inner.appendChild(back); wrapper.appendChild(inner); boardEl.appendChild(wrapper);
+      card.element=wrapper; cards.push(card);
+      wrapper.addEventListener('click',()=>onCardClick(card));
+      wrapper.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onCardClick(card); }});
+    });
+    first=null; second=null; moves=0; matches=0; locked=false;
+    movesEl.textContent=moves; msgEl.textContent=''; stopTimer(); timerEl.textContent='00:00'; startTS=null;
+    loadBest();
+    updateModeButtons();
+  }
+
+  function startTimer(){ stopTimer(); timerId=setInterval(()=>{ if(!startTS){timerEl.textContent='00:00'; return;} const s=Math.floor((Date.now()-startTS)/1000); timerEl.textContent=formatTime(s); },300); startTS=startTS||Date.now();}
+  function stopTimer(){ if(timerId) clearInterval(timerId); timerId=null; }
+
+  function loadBest(){ const key=(cols===4)?'yhaz_memory_best_4x4':'yhaz_memory_best_6x6'; const v=localStorage.getItem(key); bestEl.textContent=v?v:'—'; }
+  function setBest(time,moves){ const key=(cols===4)?'yhaz_memory_best_4x4':'yhaz_memory_best_6x6'; const prev=localStorage.getItem(key); const val=`${formatTime(time)} • ${moves}m`; if(!prev||compareBest(prev,val)){localStorage.setItem(key,val); bestEl.textContent=val;} }
+  function compareBest(prev,candidate){ const parse=s=>{const [t,mPart]=s.split(' • '); const [mm,ss]=t.split(':').map(Number); const time=mm*60+ss; const moves=Number(mPart.replace('m','')); return {time,moves};}; const p=parse(prev), c=parse(candidate); if(c.time<p.time) return true; if(c.time===p.time&&c.moves<p.moves) return true; return false; }
+
+  function onCardClick(card){
+    if(locked||card.matched||autoSolving) return;
+    if(!startTS){ startTimer(); startTS=performance.now(); }
+    if(first&&first.id===card.id) return;
+    card.element.classList.add('flipped');
+    if(!first){ first=card; return; }
+    if(!second){ second=card; moves++; movesEl.textContent=moves; locked=true; setTimeout(comparePair,480); }
+  }
+
+  function comparePair(){
+    if(!first||!second){ locked=false; return; }
+    if(first.symbol===second.symbol){
+      first.matched=true; second.matched=true;
+      first.element.querySelector('.face.back').classList.add('revealed');
+      second.element.querySelector('.face.back').classList.add('revealed');
+      matches++; msgEl.textContent='Match!';
+      if(matches===pairs){ stopTimer(); const elapsed=Math.floor((Date.now()-startTS)/1000); msgEl.textContent=`🎉 Completo in ${formatTime(elapsed)} e ${moves} mosse`; setBest(elapsed,moves);}
+    } else { 
+      first.element.classList.remove('flipped'); 
+      second.element.classList.remove('flipped'); 
+      msgEl.textContent='Nope'; 
+    }
+    first=null; second=null; locked=false;
+    if(autoSolving) setTimeout(autoSolveStep, 300);
+  }
+
+  function hint(){ 
+    if(locked || autoSolving) return; 
+    const unmatched=cards.filter(c=>!c.matched&&!c.element.classList.contains('flipped')); 
+    if(!unmatched.length) return; 
+    const pick=unmatched[Math.floor(Math.random()*unmatched.length)]; 
+    pick.element.classList.add('flipped'); 
+    setTimeout(()=>{
+      if(!pick.matched) pick.element.classList.remove('flipped');
+    },800); 
+  }
+
+  function autoSolve(){ 
+    if(autoSolving) return stopAutoSolve(); 
+    autoSolving=true; 
+    msgEl.textContent='AutoSolve attivo'; 
+    if(!startTS){ startTimer(); startTS=Date.now(); } 
+    autoSolveStep(); 
+  }
+
+  function autoSolveStep(){ 
+    if(!autoSolving) return; 
+    if(locked){ setTimeout(autoSolveStep,300); return; } 
+    const unmatched=cards.filter(c=>!c.matched); 
+    if(!unmatched.length){ autoSolving=false; msgEl.textContent='AutoSolve finito'; return; } 
+    const a=unmatched.find(c=>!c.element.classList.contains('flipped'))||unmatched[0]; 
+    onCardClick(a); 
+    const sym=a.symbol; 
+    const other=unmatched.find(c=>c.id!==a.id&&c.symbol===sym&&!c.element.classList.contains('flipped')); 
+    if(other) {
+      setTimeout(()=> onCardClick(other), 500);
+    }
+    setTimeout(autoSolveStep, 1000);
+  }
+
+  function stopAutoSolve(){ autoSolving=false; msgEl.textContent='AutoSolve fermato'; }
+
+  size4Btn.addEventListener('click',()=>{ cols=4; buildBoard(); });
+  size6Btn.addEventListener('click',()=>{ cols=6; buildBoard(); });
+  shuffleBtn.addEventListener('click',()=>{ buildBoard(); });
+  restartBtn.addEventListener('click',()=>{ buildBoard(); });
+  hintBtn.addEventListener('click',hint);
+  autoSolveBtn.addEventListener('click',autoSolve);
+  homeBtn.addEventListener('click',()=>{ if(confirm('Tornare alla home? Il gioco in corso verrà interrotto.')){ window.location.href = '/'; } });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='h') hint(); if(e.key==='r') buildBoard(); if(e.key==='a') autoSolve(); });
+
+  buildBoard();
+})();
+</script>
+</body>
+</html>
