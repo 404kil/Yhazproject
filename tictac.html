@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRIX - YHAZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#000; --fg:#fff; --muted:#888; --accent:#fff;
+      --danger:#ff4d4d; --ok:#5cff5c; --cell-bg:#0b0b0b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:'VT323',monospace;}
+    body{display:flex; flex-direction:column;}
+    header{display:flex; align-items:center; justify-content:center; padding:6px; position:relative;}
+    .home-btn{position:absolute; left:12px; background:none; border:none; color:var(--fg); font-family:'VT323'; font-size:16px; cursor:pointer; padding:4px 8px; border-radius:4px;}
+    .home-btn:hover{background:rgba(255,255,255,0.1);}
+    h1{margin:0; font-size:32px; text-shadow:0 0 6px #fff;}
+    .kbd{color:var(--muted); font-size:12px; margin-top:2px;}
+    .game-container{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:4px; width:100%;}
+    .board-container{display:flex; justify-content:center; align-items:center; margin:12px auto; padding:8px;}
+    #board{display:grid; grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(3, 1fr); gap:4px; margin:0 auto; background:rgba(255,255,255,0.05); padding:8px; border-radius:4px;}
+    .cell{width:80px; height:80px; border:1px solid var(--fg); display:flex; align-items:center; justify-content:center; font-size:32px; cursor:pointer; background:var(--cell-bg); transition:0.1s; border-radius:2px;}
+    .cell:hover{background:#1a1a1a;}
+    .cell.x{color:#ff4d4d;}
+    .cell.o{color:#5cff5c;}
+    .info{display:flex; gap:12px; justify-content:center; font-size:14px; margin:8px 0;}
+    .controls{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:6px 0; width:100%; max-width:480px;}
+    .btn{flex:1; min-width:60px; border:1px solid var(--fg); padding:12px 0; background:transparent; color:var(--fg); cursor:pointer; font-family:'VT323'; text-transform:uppercase; font-size:16px; border-radius:8px; max-width:120px;}
+    .btn:hover{background:var(--fg); color:var(--bg);}
+    .message{color:var(--fg); margin:8px 0; min-height:22px; font-size:16px; text-align:center;}
+    footer{text-align:center; color:var(--muted); font-size:12px; padding:6px;}
+    
+    /* Miglioramenti per desktop */
+    @media (min-width: 768px) {
+      .btn{max-width:140px; padding:14px 0; font-size:18px;}
+      .cell{width:100px; height:100px; font-size:40px;}
+      h1{font-size:36px;}
+    }
+
+    /* Miglioramenti per mobile */
+    @media (max-width: 480px) {
+      .game-container{padding:2px;}
+      .cell{width:70px; height:70px; font-size:28px;}
+      .controls{gap:4px; padding:0 8px;}
+      .btn{min-width:50px; font-size:14px; padding:10px 0;}
+      h1{font-size:28px;}
+    }
+
+    /* Per schermi molto piccoli */
+    @media (max-width: 360px) {
+      .cell{width:60px; height:60px; font-size:24px;}
+    }
+
+    .winning-cell {
+      background: rgba(255,255,255,0.1) !important;
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="home-btn" id="home">HOME</button>
+    <div style="text-align:center;">
+      <h1>YHAZ TRIX</h1>
+      <div class="kbd">Tris • Gioca contro il computer</div>
+    </div>
+  </header>
+
+  <div class="game-container">
+    <div class="info">
+      <div>Tu: <strong style="color:#ff4d4d">X</strong></div>
+      <div>•</div>
+      <div>Computer: <strong style="color:#5cff5c">O</strong></div>
+    </div>
+
+    <div class="board-container">
+      <div id="board"></div>
+    </div>
+
+    <div class="message" id="message">Turno del giocatore: X</div>
+
+    <div class="controls">
+      <button class="btn" id="restartBtn">Ricomincia</button>
+    </div>
+  </div>
+
+  <footer>© 2025 YHAZ — Tris • VT323 look</footer>
+
+  <script>
+    (() => {
+      const board = document.getElementById("board");
+      const message = document.getElementById("message");
+      const restartBtn = document.getElementById("restartBtn");
+      const homeBtn = document.getElementById("home");
+
+      let cells = [];
+      let currentPlayer = "X"; // giocatore
+      let gameOver = false;
+      let difficulty = "medium"; // easy, medium, hard
+
+      // Configurazioni di difficoltà
+      const difficulties = {
+        easy: { name: "Facile", winChance: 0.3, blockChance: 0.5 },
+        medium: { name: "Media", winChance: 0.7, blockChance: 0.8 },
+        hard: { name: "Difficile", winChance: 0.9, blockChance: 0.95 }
+      };
+
+      function createBoard() {
+        board.innerHTML = "";
+        cells = [];
+        gameOver = false;
+        currentPlayer = "X";
+        message.textContent = "Turno del giocatore: " + currentPlayer;
+
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.dataset.index = i;
+          cell.addEventListener("click", () => makeMove(i));
+          board.appendChild(cell);
+          cells.push(cell);
+        }
+      }
+
+      function makeMove(index) {
+        if (gameOver || cells[index].textContent !== "" || currentPlayer !== "X") return;
+
+        cells[index].textContent = currentPlayer;
+        cells[index].classList.add("x");
+
+        const winResult = checkWin();
+        if (winResult.win) {
+          highlightWinningCells(winResult.line);
+          message.textContent = "Hai vinto! 🎉";
+          gameOver = true;
+          return;
+        } else if (isBoardFull()) {
+          message.textContent = "Pareggio!";
+          gameOver = true;
+          return;
+        } else {
+          currentPlayer = "O";
+          message.textContent = "Turno del computer...";
+          setTimeout(botMove, 500); // ritardo bot per effetto realistico
+        }
+      }
+
+      function botMove() {
+        const move = getBestMove();
+        cells[move].textContent = "O";
+        cells[move].classList.add("o");
+
+        const winResult = checkWin();
+        if (winResult.win) {
+          highlightWinningCells(winResult.line);
+          message.textContent = "Il computer ha vinto! 🤖";
+          gameOver = true;
+          return;
+        } else if (isBoardFull()) {
+          message.textContent = "Pareggio!";
+          gameOver = true;
+          return;
+        } else {
+          currentPlayer = "X";
+          message.textContent = "Turno del giocatore: " + currentPlayer;
+        }
+      }
+
+      function getAvailableMoves() {
+        return cells
+          .map((cell, idx) => cell.textContent === "" ? idx : null)
+          .filter(idx => idx !== null);
+      }
+
+      function getBestMove() {
+        const available = getAvailableMoves();
+        if (available.length === 0) return -1;
+
+        // Strategia in base alla difficoltà
+        const config = difficulties[difficulty];
+
+        // Prova a vincere
+        if (Math.random() < config.winChance) {
+          const winMove = findWinningMove("O");
+          if (winMove !== -1) return winMove;
+        }
+
+        // Prova a bloccare il giocatore
+        if (Math.random() < config.blockChance) {
+          const blockMove = findWinningMove("X");
+          if (blockMove !== -1) return blockMove;
+        }
+
+        // Strategia per difficoltà facile: mosse più casuali
+        if (difficulty === "easy") {
+          // A volte fa mosse non ottimali
+          if (Math.random() < 0.3) {
+            return available[Math.floor(Math.random() * available.length)];
+          }
+        }
+
+        // Strategia centrale e angoli per difficoltà media e difficile
+        const center = 4;
+        if (cells[center].textContent === "" && Math.random() < 0.8) {
+          return center;
+        }
+
+        const corners = [0, 2, 6, 8];
+        const availableCorners = corners.filter(idx => cells[idx].textContent === "");
+        if (availableCorners.length > 0 && Math.random() < 0.7) {
+          return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+        }
+
+        // Altrimenti mossa casuale
+        return available[Math.floor(Math.random() * available.length)];
+      }
+
+      function findWinningMove(player) {
+        const boardState = cells.map(c => c.textContent);
+        const winPatterns = [
+          [0,1,2],[3,4,5],[6,7,8], // righe
+          [0,3,6],[1,4,7],[2,5,8], // colonne
+          [0,4,8],[2,4,6] // diagonali
+        ];
+        
+        for (let pattern of winPatterns) {
+          const [a,b,c] = pattern;
+          const values = [boardState[a], boardState[b], boardState[c]];
+          if (values.filter(v => v === player).length === 2 && values.includes("")) {
+            return pattern[values.indexOf("")];
+          }
+        }
+        return -1;
+      }
+
+      function checkWin() {
+        const boardState = cells.map(c => c.textContent);
+        const winPatterns = [
+          [0,1,2],[3,4,5],[6,7,8], // righe
+          [0,3,6],[1,4,7],[2,5,8], // colonne
+          [0,4,8],[2,4,6] // diagonali
+        ];
+        
+        for (let pattern of winPatterns) {
+          const [a,b,c] = pattern;
+          if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+            return { win: true, line: pattern };
+          }
+        }
+        return { win: false, line: [] };
+      }
+
+      function highlightWinningCells(line) {
+        line.forEach(index => {
+          cells[index].classList.add("winning-cell");
+        });
+      }
+
+      function isBoardFull() {
+        return cells.every(cell => cell.textContent !== "");
+      }
+
+      // Event listeners
+      restartBtn.addEventListener('click', createBoard);
+      homeBtn.addEventListener('click', () => {
+        if(confirm('Tornare alla home? Il gioco in corso verrà interrotto.')){
+          window.location.href = 'index.html';
+        }
+      });
+
+      // Inizializzazione
+      createBoard();
+    })();
+  </script>
+</body>
+</html>
