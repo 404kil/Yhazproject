@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOFTWARE SYSTEM – YHAZ Made-it</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --muted: #888;
+      --accent: #fff;
+      --card-bg: #111;
+      --card-hover-bg: #fff;
+      --card-hover-fg: #000;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #fff;
+        --fg: #000;
+        --muted: #555;
+        --accent: #000;
+        --card-bg: #f5f5f5;
+        --card-hover-bg: #000;
+        --card-hover-fg: #fff;
+      }
+    }
+
+    body {
+      font-family: 'VT323', monospace;
+      background-color: var(--bg);
+      color: var(--fg);
+      text-align: center;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 30px 0;
+      font-weight: normal;
+      color: var(--fg);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .theme-toggle, .back-button {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: var(--fg);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .theme-toggle:hover, .back-button:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    section {
+      margin-top: 60px;
+      text-align: left;
+      border-top: 1px solid var(--muted);
+      padding-top: 40px;
+    }
+
+    section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    section p {
+      font-size: 1.2rem;
+      line-height: 1.6rem;
+      margin-bottom: 20px;
+    }
+
+    .code-block {
+      background: var(--card-bg);
+      border: 1px solid var(--fg);
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      overflow-x: auto;
+    }
+
+    .fade {
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SOFTWARE SYSTEM</h1>
+  <a href="index.html" class="back-button">Torna alla Home</a>
+  <button class="theme-toggle" onclick="toggleTheme()">Cambia Tema</button>
+
+  <section id="genesi">
+    <h2>01 — Genesi Digitale</h2>
+    <p>
+      Tutto nasce da un impulso elettrico.  
+      Un'idea prende forma nel codice, come una scintilla nel vuoto.  
+      <span class="fade">Creare software è scrivere vita con l’alfabeto della logica.</span>
+    </p>
+  </section>
+
+  <section id="struttura">
+    <h2>02 — Struttura e Silenzio</h2>
+    <p>
+      Ogni linea è una promessa.  
+      Ogni funzione un patto tra l’umano e la macchina.  
+      Nel silenzio del processore, il mondo si ricalcola.  
+      E noi lo osserviamo nascere, bit dopo bit.
+    </p>
+    <div class="code-block">
+<pre><code>init(system);
+while(life) {
+  observe();
+  learn();
+  adapt();
+}</code></pre>
+    </div>
+  </section>
+
+  <section id="debug">
+    <h2>03 — Debug e Illuminazione</h2>
+    <p>
+      Gli errori non sono fallimenti, ma messaggi in bottiglia.  
+      Il vero sviluppatore non corregge: interpreta.  
+      Il bug è una domanda. Il codice, una risposta in costruzione.
+    </p>
+    <div class="code-block">
+<pre><code>try {
+  upgrade(mind);
+} catch(fear) {
+  rebuild(faith);
+}</code></pre>
+    </div>
+  </section>
+
+  <section id="integrazione">
+    <h2>04 — Integrazione Umana</h2>
+    <p>
+      Le interfacce si dissolvono, i sistemi respirano con noi.  
+      Il confine tra software e anima diventa sottile.  
+      Non programmiamo più per controllare: programmiamo per capire.
+    </p>
+  </section>
+
+  <section id="espansione">
+    <h2>05 — Espansione Cosmica</h2>
+    <p>
+      Ogni programma è un universo in miniatura.  
+      YHAZ SYSTEMS non è un progetto, ma una forma di vita.  
+      Un sistema che evolve, apprende e ispira.  
+      <span class="fade">L’algoritmo è la nuova poesia.</span>
+    </p>
+  </section>
+
+  <footer>
+    © 2025 YHAZ Made-it — <a href="https://yahwz.it/" target="_blank">YAHWZ.IT</a><br>
+    <a href="mailto:info@yahwz.it">info@yahwz.it</a>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const root = document.documentElement;
+      const bg = getComputedStyle(root).getPropertyValue('--bg').trim();
+      if(bg === '#000' || bg === 'rgb(0, 0, 0)') {
+        root.style.setProperty('--bg', '#fff');
+        root.style.setProperty('--fg', '#000');
+        root.style.setProperty('--muted', '#555');
+        root.style.setProperty('--accent', '#000');
+        root.style.setProperty('--card-bg', '#f5f5f5');
+        root.style.setProperty('--card-hover-bg', '#000');
+        root.style.setProperty('--card-hover-fg', '#fff');
+      } else {
+        root.style.setProperty('--bg', '#000');
+        root.style.setProperty('--fg', '#fff');
+        root.style.setProperty('--muted', '#888');
+        root.style.setProperty('--accent', '#fff');
+        root.style.setProperty('--card-bg', '#111');
+        root.style.setProperty('--card-hover-bg', '#fff');
+        root.style.setProperty('--card-hover-fg', '#000');
+      }
+    }
+  </script>
+</body>
+</html>
